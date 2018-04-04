@@ -25,7 +25,7 @@ frames = []
 for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
     data = stream.read(CHUNK)
     frames.append(data)
-    #set_trace()
+    # set_trace()
     print(data[:20])
     print()
 
