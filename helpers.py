@@ -11,6 +11,7 @@ def make_input(d):
         input=True,
         frames_per_buffer=d.chunk)
 
+
 def make_output(d):
     p = pyaudio.PyAudio()
     return p.open(
@@ -20,11 +21,13 @@ def make_output(d):
         output=True,
         frames_per_buffer=d.chunk)
 
+
 def plot_it(ax, fig, plt_dta):
     ax.clear()
     ax.set_ylim([-30000,30000])
     ax.plot(plt_dta)
     fig.canvas.draw()
+
 
 def set_up_ax_fig():
     plt.ion()
