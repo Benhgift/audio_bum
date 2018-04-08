@@ -22,6 +22,12 @@ def make_output(d):
         frames_per_buffer=d.chunk)
 
 
+def close_streams(streams):
+    for stream in streams:
+        stream.stop_stream()
+        stream.close()
+
+
 def plot_it(ax, fig, plt_dta):
     ax.clear()
     ax.set_ylim([-30000,30000])

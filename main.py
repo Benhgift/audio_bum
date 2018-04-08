@@ -1,3 +1,4 @@
+import fire
 import pyaudio
 import pdir
 import numpy as np
@@ -7,12 +8,12 @@ from itertools import count, chain
 from helpers import *
 
 
-def soundplot(olddata, stream, stream2, i, d):
+def soundplot(olddata, stream, out_stream, i, d):
     snd = Box()
     snd.raw_data = stream.read(d.chunk)
     snd.data = np.fromstring(snd.raw_data, dtype=np.int16)
     print(sum(np.absolute(snd.data)))
-    # stream2.write(olddata)
+    # out_stream.write(olddata)
     if len(olddata) >= 8:
         plt_dta = np.concatenate([x.data for x in olddata])
         plot_it(d.ax, d.fig, plt_dta)
@@ -20,17 +21,15 @@ def soundplot(olddata, stream, stream2, i, d):
     return olddata + [snd]
 
 if __name__=="__main__":
-    d = Box()  # d = data_blob of rate/chunk axis/figure
-    #d.rate = 44100
-    d.rate = 4410
-    d.chunk = int(d.rate/8) # d.rate / number of updates per second
+    d = Box()  # d = blob of rate&chunk axis&figure
+    d.rate = 4410  # 44100
+    d.chunk = int(d.rate/8)  # d.rate / number of updates per second
     d.ax, d.fig = set_up_ax_fig()
 
     stream = make_input(d)
-    stream2 = make_output(d)
+    out_stream = make_output(d)
+    #d.rate = 44100
     data = []
     for i in count():
-        data = soundplot(data, stream, stream2, i, d)
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
+        data = soundplot(data, stream, out_stream, i, d)
+    close_streams([stream, out_stream]
