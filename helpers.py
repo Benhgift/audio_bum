@@ -1,5 +1,6 @@
 import pyaudio
 import matplotlib.pyplot as plt
+from box import Box
 
 
 def make_input(d):
@@ -43,3 +44,11 @@ def set_up_ax_fig():
     ax = fig.add_subplot(111)
     ax.set_ylim([-30000,30000])
     return ax, fig
+
+
+def make_blob():
+    d = Box()  # d = blob of rate&chunk axis&figure
+    d.rate = 20000  # 44100
+    d.chunk = int(d.rate/8)  # d.rate / number of updates per second
+    # d.ax, d.fig = set_up_ax_fig()
+    return d
