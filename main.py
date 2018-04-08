@@ -32,4 +32,4 @@ if __name__=="__main__":
     data = []
     for i in count():
         data = soundplot(data, stream, out_stream, i, d)
-    close_streams([stream, out_stream]
+    close_streams([stream, out_stream])
