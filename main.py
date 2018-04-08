@@ -10,30 +10,25 @@ from lib.helpers import *
 from lib.sig_handle import *
 
 
-def soundplot(olddata, strms, i, d):
+def collect_audio_and_do_stuff(old_snd_dtas, strms, i, d):
     snd = Box(raw_data = strms.into.read(d.chunk))
     snd.int_data = np.fromstring(snd.raw_data, dtype=np.int16)
     print(sum(np.absolute(snd.int_data)))
     silly_data = (snd.int_data) * 2
     strms.out.write(silly_data.tobytes())
-    if len(olddata) >= 8:
-        plt_dta = np.concatenate([x.int_data for x in olddata])
-        if d.plot:
-            plot_it(d.ax, d.fig, plt_dta)
-        olddata = olddata[1:]
-    return olddata + [snd]
+    old_snd_dtas = plot_if_possible(old_snd_dtas, d)
+    return old_snd_dtas + [snd]
 
 
 def main(plot=False, write_wav=False):
     d = make_blob(plot)  # d = blob of rate&chunk axis&figure plot
     strms = make_streams(d)
-    snd_datas = []  # array of snd objects which each hold raw_data and int_data
-    dataCollection = np.array([1], dtype=np.int16)
     setup_sig_handler(strms)
+    snd_datas = []  # array of snd objects which each hold raw_data and int_data
+    dta_list = np.array([1], dtype=np.int16)
     for i in count():
-        snd_datas = soundplot(snd_datas, strms, i, d)
-        if write_wav:
-            dataCollection = writeFile("test.wav", 20000, dataCollection, snd_datas)
+        snd_datas = collect_audio_and_do_stuff(snd_datas, strms, i, d)
+        dta_list = write_file_try("test.wav", 20000, dta_list, snd_datas, write_wav)
 
 
 if __name__=="__main__":

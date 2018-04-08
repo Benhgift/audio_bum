@@ -5,6 +5,15 @@ import numpy as np
 from box import Box
 
 
+def plot_if_possible(old_snd_dtas, d):
+    if len(old_snd_dtas) >= 8:
+        plt_dta = np.concatenate([x.int_data for x in old_snd_dtas])
+        if d.plot:
+            plot_it(d.ax, d.fig, plt_dta)
+        old_snd_dtas = old_snd_dtas[1:]
+    return old_snd_dtas
+
+
 def make_streams(d):
     s = Box()
     s.into = make_input(d)
@@ -64,6 +73,7 @@ def make_blob(plot):
     return d
 
 
-def writeFile(filename, rate, nparray, dataStream):
+def write_file_try(filename, rate, nparray, dataStream, write_wav):
+    if not write_wav: return
     scipy.io.wavfile.write(filename, rate, nparray)
     return np.append(nparray, dataStream[-1].data)
