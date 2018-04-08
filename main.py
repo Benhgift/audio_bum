@@ -2,38 +2,39 @@ import fire
 import pyaudio
 import pdir
 import numpy as np
-import scipy.io.wavfile
 import queue
+import signal
 from pdb import set_trace as st
 from itertools import count
-from helpers import *
+from lib.helpers import *
+from lib.sig_handle import *
 
 
-def soundplot(olddata, stream, out_stream, i, d):
-    snd = Box()
-    snd.raw_data = stream.read(d.chunk)
-    snd.data = np.fromstring(snd.raw_data, dtype=np.int16)
-    print(sum(np.absolute(snd.data)))
-    silly_data = (snd.data) * 2
-    out_stream.write(silly_data.tobytes())
+def soundplot(olddata, strms, i, d):
+    snd = Box(raw_data = strms.into.read(d.chunk))
+    snd.int_data = np.fromstring(snd.raw_data, dtype=np.int16)
+    print(sum(np.absolute(snd.int_data)))
+    silly_data = (snd.int_data) * 2
+    strms.out.write(silly_data.tobytes())
     if len(olddata) >= 8:
-        plt_dta = np.concatenate([x.data for x in olddata])
-        #plot_it(d.ax, d.fig, plt_dta)
+        plt_dta = np.concatenate([x.int_data for x in olddata])
+        if d.plot:
+            plot_it(d.ax, d.fig, plt_dta)
         olddata = olddata[1:]
     return olddata + [snd]
-   
-#Takes a string filename, the rate, the np.array collection, and the np.array stream.
-def writeFile(filename, rate, nparray, dataStream):
-    scipy.io.wavfile.write(filename, rate, nparray)
-    return np.append(nparray, dataStream[-1].data)
-    
-if __name__=="__main__":
-    d = make_blob()  # d = blob of rate&chunk axis&figure
-    stream = make_input(d)
-    out_stream = make_output(d)
-    data = []
-    dataCollection = np.array([1], dtype=np.int16)#
+
+
+def main(plot=False, write_wav=False):
+    d = make_blob(plot)  # d = blob of rate&chunk axis&figure plot
+    strms = make_streams(d)
+    snd_datas = []  # array of snd objects which each hold raw_data and int_data
+    dataCollection = np.array([1], dtype=np.int16)
+    setup_sig_handler(strms)
     for i in count():
-        data = soundplot(data, stream, out_stream, i, d)
-        dataCollection = writeFile("test.wav", 4410, dataCollection, data)
-    close_streams([stream, out_stream])
+        snd_datas = soundplot(snd_datas, strms, i, d)
+        if write_wav:
+            dataCollection = writeFile("test.wav", 20000, dataCollection, snd_datas)
+
+
+if __name__=="__main__":
+    fire.Fire(main)

@@ -1,6 +1,15 @@
 import pyaudio
 import matplotlib.pyplot as plt
+import scipy.io.wavfile
+import numpy as np
 from box import Box
+
+
+def make_streams(d):
+    s = Box()
+    s.into = make_input(d)
+    s.out = make_output(d)
+    return s
 
 
 def make_input(d):
@@ -37,7 +46,6 @@ def plot_it(ax, fig, plt_dta):
 
 
 def set_up_ax_fig():
-    plt.ion()
     fig = plt.figure()
     fig.show()
     fig.canvas.draw()
@@ -46,9 +54,16 @@ def set_up_ax_fig():
     return ax, fig
 
 
-def make_blob():
+def make_blob(plot):
     d = Box()  # d = blob of rate&chunk axis&figure
     d.rate = 20000  # 44100
     d.chunk = int(d.rate/8)  # d.rate / number of updates per second
-    # d.ax, d.fig = set_up_ax_fig()
+    d.plot = plot
+    if plot:
+        d.ax, d.fig = set_up_ax_fig()
     return d
+
+
+def writeFile(filename, rate, nparray, dataStream):
+    scipy.io.wavfile.write(filename, rate, nparray)
+    return np.append(nparray, dataStream[-1].data)
