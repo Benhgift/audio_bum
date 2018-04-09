@@ -63,10 +63,12 @@ def set_up_ax_fig():
     return ax, fig
 
 
-def make_blob(plot):
+def make_blob(plot, pitch_shift):
     d = Box()  # d = blob of rate&chunk axis&figure
-    d.rate = 20000  # 44100
-    d.chunk = int(d.rate/8)  # d.rate / number of updates per second
+    d.pitch_shift = pitch_shift
+    d.rate = 44100
+    d.chunks_per_second = 1
+    d.chunk = int(d.rate/d.chunks_per_second)  # d.rate / number of updates per second
     d.plot = plot
     if plot:
         d.ax, d.fig = set_up_ax_fig()
