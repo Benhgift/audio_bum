@@ -1,9 +1,6 @@
 import fire
-import pyaudio
 import pdir
 import numpy as np
-import queue
-import signal
 from pdb import set_trace as st
 from itertools import count
 from lib.helpers import *
@@ -19,7 +16,7 @@ def pitch_shift_one_chunk(chunk, shift_amnt):
 
 
 def pitch_shift(int_data, d):
-    # if not d.pitch_shift: return int_data
+    if not d.pitch_shift: return int_data
     chunks = 2
     shift_amnt = d.pitch_shift//chunks
     #chunk_size = int_data.size//chunks
@@ -32,6 +29,8 @@ def pitch_shift(int_data, d):
 
 
 def collect_audio_and_do_stuff(old_snd_dtas, strms, i, d):
+    if i == 5:
+        st()
     snd = Box(raw_data = strms.into.read(d.chunk))
     snd.int_data = np.fromstring(snd.raw_data, dtype=np.int16)
     print(sum(np.absolute(snd.int_data)))
