@@ -1,3 +1,8 @@
-hi, I'm building a pitch changer
+Hi, I'm building a pitch changer
 
-Update 11/18: It actually currently works. Use it with `python3 main.py` and you can pass in how much to shift it by (look at the `main` function for arguments). It just sounds choppy and robotic :/
+# quickstart: 
+`pip3 install -r requirements.txt`
+This only works in OSX
+`python3 say_words_back_in_girl_voice.py`
+This command below here will will increase your pitch by 100hz, but is robot and choppy and lame (WIP).
+`python3 main.py --shift_pitch=100`
